@@ -1,5 +1,6 @@
 // Create a simple module that calculates the factorial of a number
 
+// Function to calculate factorial
 const calculateFactorial = (num) => {
   let factorial = 1;
   for (let i = 1; i <= num; i++) {
@@ -8,4 +9,4 @@ const calculateFactorial = (num) => {
   return factorial;
 };
 
-module.exports = calculateFactorial; // Exporting factorial module
+module.exports = calculateFactorial; // Exporting the function

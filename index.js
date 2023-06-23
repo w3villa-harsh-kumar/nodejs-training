@@ -1,4 +1,4 @@
 // importing calculateFactorial funtion from factorial module
-const calculateFactorial = require("./factorial");
+const calculateFactorial = require("./modules/factorial");
 
 console.log(calculateFactorial(2));

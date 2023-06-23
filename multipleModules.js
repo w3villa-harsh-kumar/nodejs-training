@@ -1,7 +1,7 @@
 // Build a simple Node.js application that utilizes multiple modules and includes external npm packages.
 
 // import the modules
-const calculateFactorial = require("./factorial"); // custom module
+const calculateFactorial = require("./modules/factorial"); // custom module
 
 // import built-in modules
 const fs = require("fs"); // file system module
