@@ -1,0 +1,7 @@
+Benifits of Node js
+====================
+
+1. Node.js is a JavaScript runtime built on Chrome’s V8 JavaScript engine.
+2. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient.
+3. Node.js’ package ecosystem, npm, is the largest ecosystem of open source libraries in the world.
+4. Node.js is a very powerful JavaScript-based framework/platform built on Google Chrome’s JavaScript V8 Engine.
