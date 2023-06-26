@@ -1,5 +1,8 @@
+const { Transaction } = require("sequelize");
 const { CustomAPIError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
+const db = require("../models");
+console.log(db.User.transaction);
 const errorHandlerMiddleware = (err, req, res, next) => {
     console.log(err);
     if (err instanceof CustomAPIError) {

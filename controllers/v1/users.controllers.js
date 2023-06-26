@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, AnonmyousError } = require("../../errors");
-const User = require("../../models/user.model");
+const User = require("../../models").User;
 
 module.exports = {
     register: async (req, res, next) => {
@@ -34,10 +34,7 @@ module.exports = {
             });
         } catch (error) {
             await transaction.rollback();
-            throw new AnonmyousError(
-                error.message,
-                StatusCodes.INTERNAL_SERVER_ERROR
-            );
+            return next(error);
         }
     },
 
@@ -59,7 +56,7 @@ module.exports = {
             }
 
             // generate auth token
-            const token = await user.generateAuthTokn();
+            const token = await user.generateAuthToken();
 
             // commit transaction
             await transaction.commit();
@@ -72,10 +69,7 @@ module.exports = {
             });
         } catch (error) {
             await transaction.rollback();
-            throw new AnonmyousError(
-                error.message,
-                StatusCodes.INTERNAL_SERVER_ERROR
-            );
+            return next(error);
         }
     },
 };

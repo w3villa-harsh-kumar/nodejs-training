@@ -4,13 +4,15 @@ require("express-async-errors");
 // Database connection
 const db = require("./db/db.connect");
 
+
+
 // error handler
 const notFoundMiddleware = require("./middlewares/not-found");
 const errorHandlerMiddleware = require("./middlewares/error-handler");
 
 // Routes
 const userRoutes = require("./routes/users.routes");
-console.log(userRoutes);
+const taskRoutes = require("./routes/tasks.routes");
 
 const cors = require("cors");
 const express = require("express");
@@ -30,6 +32,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/tasks", taskRoutes);
 
 // Error Handler
 app.use(notFoundMiddleware);
