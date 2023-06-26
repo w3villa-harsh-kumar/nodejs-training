@@ -33,7 +33,7 @@ module.exports = (sequelize, Sequelize) => {
         {
             // Other model options go here
             tableName: "users",
-            paranoid: true,
+            paranoid: false,
             timestamps: true,
             underscored: true,
             indexes: [

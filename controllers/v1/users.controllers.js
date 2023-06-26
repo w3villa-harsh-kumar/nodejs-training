@@ -6,7 +6,7 @@ module.exports = {
     register: async (req, res, next) => {
         // create a transaction
         const transaction = await User.sequelize.transaction();
-        try {
+        try { 
             // check if user already exists
             const user = await User.findOne({
                 where: {
@@ -17,7 +17,7 @@ module.exports = {
                 throw new BadRequestError("User already exists");
             }
 
-            // create new user
+            // create new user 
             const newUser = await User.create(req.body, { transaction });
 
             // generate auth token

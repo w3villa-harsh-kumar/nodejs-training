@@ -24,7 +24,8 @@ module.exports = {
             // send response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: task,
+                task,
+                msg: "Task created successfully",
             });
         } catch (error) {
             // rollback transaction
@@ -56,7 +57,8 @@ module.exports = {
             // send response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: tasks,
+                tasks,
+                msg: "Tasks fetched successfully",
             });
         } catch (error) {
             // rollback transaction
@@ -91,7 +93,8 @@ module.exports = {
             // commit transaction
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: task,
+                task,
+                msg: "Task fetched successfully",
             });
         } catch (error) {
             // rollback transaction
@@ -126,7 +129,8 @@ module.exports = {
             // send response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: task,
+                task,
+                msg: "Task updated successfully",
             });
         } catch (error) {
             // rollback transaction

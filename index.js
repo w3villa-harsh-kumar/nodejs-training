@@ -54,3 +54,5 @@ db.sync()
         logger.error("Unable to connect to the database:", error);
         process.exit(1);
     });
+
+module.exports = app;

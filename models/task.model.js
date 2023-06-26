@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         {
             tableName: "tasks",
-            paranoid: true,
+            paranoid: false,
             timestamps: true,
             underscored: true,
             indexes: [
