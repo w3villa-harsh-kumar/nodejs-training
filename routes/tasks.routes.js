@@ -17,6 +17,7 @@ const authenticate = require("../middlewares/authenticate");
 
 const router = require("express").Router();
 
+// Task Routes
 router.post(
     "/",
     authenticate,
@@ -32,6 +33,5 @@ router.patch(
     updateTask
 );
 router.delete("/:id", authenticate, deleteTask);
-
 
 module.exports = router;

@@ -9,6 +9,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+// import all models
 fs.readdirSync(__dirname)
     .filter((file) => {
         return (
@@ -25,6 +26,7 @@ fs.readdirSync(__dirname)
         db[model.name] = model;
     });
 
+// create associations between models
 Object.keys(db).forEach((modelName) => {
     if (db[modelName].associate) {
         db[modelName].associate(db);

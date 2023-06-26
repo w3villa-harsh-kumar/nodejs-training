@@ -6,10 +6,11 @@ const {
 
 const validator = require("../middlewares/validator");
 
-const Router = require('express').Router;
+const Router = require("express").Router;
 
 const router = Router();
 
+// Auth Routes
 router.post("/register", validator(registerValidations, "body"), register);
 router.post("/login", validator(loginValidations, "body"), login);
 

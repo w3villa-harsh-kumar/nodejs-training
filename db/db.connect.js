@@ -1,10 +1,14 @@
 const Sequelize = require("sequelize");
 const dbConfig = require("../config/db.config.js");
+const logger = require("../loggers/index.js");
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
     port: dbConfig.PORT,
+    logging: (msg) => {
+        logger.debug(msg);
+    },
     pool: {
         max: Number(dbConfig.pool.max),
         min: Number(dbConfig.pool.min),
@@ -19,8 +23,8 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 //     .then(() => {
 //         console.log("Connection has been established successfully.");
 //     })
-//     .catch((err) => {
-//         console.error("Unable to connect to the database:", err);
+//     .catch((error) => {
+//         console.error("Unable to connect to the database:", error);
 //         process.exit(1);
 //     });
 

@@ -4,7 +4,9 @@ require("express-async-errors");
 // Database connection
 const db = require("./db/db.connect");
 
-
+// Logger
+const logger = require("./loggers");
+const httpLogger = require("./loggers/httpLogger");
 
 // error handler
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -20,11 +22,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-}));
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN,
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(httpLogger);
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
@@ -40,12 +45,12 @@ app.use(errorHandlerMiddleware);
 
 db.sync()
     .then(() => {
-        console.log("Database connected successfully");
+        logger.info("Database connected successfully");
         app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
+            logger.info(`Server is running on http://localhost:${PORT}`);
         });
     })
-    .catch((err) => {
-        console.error(err);
+    .catch((error) => {
+        logger.error("Unable to connect to the database:", error);
         process.exit(1);
     });

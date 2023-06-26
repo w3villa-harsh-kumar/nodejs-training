@@ -1,22 +1,23 @@
 const { Transaction } = require("sequelize");
 const { CustomAPIError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
-const db = require("../models");
-console.log(db.User.transaction);
-const errorHandlerMiddleware = (err, req, res, next) => {
-    console.log(err);
-    if (err instanceof CustomAPIError) {
+const logger = require("../loggers");
+
+const errorHandlerMiddleware = (error, req, res, next) => {
+    logger.error(error);
+    console.error(error.stack);
+    // if error is a custom error
+    if (error instanceof CustomAPIError) {
         return res
-            .status(err.statusCode)
-            .json({ msg: err.message, success: false });
+            .status(error.statusCode)
+            .json({ msg: error.message, success: false });
     }
-    return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({
-            err: err,
-            msg: "Something went wrong, please try again",
-            success: false,
-        });
+
+    // send generic message
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        msg: "Something went wrong, please try again",
+        success: false,
+    });
 };
 
 module.exports = errorHandlerMiddleware;
