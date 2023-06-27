@@ -56,7 +56,7 @@ module.exports = {
                 myFormat
             ),
             transports : [
-                new transports.File(options.file),
+                // new transports.File(options.file),
                 new transports.Console(options.console)
             ]
         });
