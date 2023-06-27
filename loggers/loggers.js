@@ -55,8 +55,10 @@ module.exports = {
                 timestamp({ format: "HH:mm:ss YYYY-MM-DD" }),
                 myFormat
             ),
-            // transports: [new transports.File(options.file)],
-            transports: [new transports.Console(options.console)],
+            transports : [
+                new transports.File(options.file),
+                new transports.Console(options.console)
+            ]
         });
     }, 
 };
