@@ -5,7 +5,7 @@ const logger = require("../loggers");
 
 const errorHandlerMiddleware = (error, req, res, next) => {
     logger.error(error);
-    console.error(error.stack);
+    logger.error(error.stack);
     // if error is a custom error
     if (error instanceof CustomAPIError) {
         return res
