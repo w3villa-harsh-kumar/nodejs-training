@@ -11,7 +11,7 @@ const db = require("./db/db.connect");
 
 // Logger
 const logger = require("./loggers");
-const httpLogger = require("./loggers/httpLogger");
+const { httpLogger, errorHttpLogger } = require("./loggers/httpLogger");
 
 // error handler
 const notFoundMiddleware = require("./middlewares/not-found");
@@ -29,16 +29,17 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 const limiter = rateLimit({
-    windowMs: 15 * Number(process.env.RATE_LIMIT_WINDOW),
+    windowMs: 15 * Number(process.env.RATE_LIMIT_WINDOW_MS),
     max: Number(process.env.RATE_LIMIT_MAX),
     standardHeaders: true,
     legacyHeaders: false,
     handler(req, res, next) {
+        console.log("req.ip", req.ip);
         logger.error(`Too many requests from ${req.ip} at ${req.originalUrl}`);
         throw new AnonmyousError(
             `Too many requests, please try again in ${Math.round(
-                this.windowMs / process.env.RATE_LIMIT_WINDOW
-            )} minutes`,
+                this.windowMs / process.env.RATE_LIMIT_WINDOW_MS
+            )} minutes`, 
             StatusCodes.TOO_MANY_REQUESTS
         );
     },
@@ -46,17 +47,15 @@ const limiter = rateLimit({
 const corsOptions = {
     origin: process.env.CORS_ORIGIN,
     optionsSuccessStatus: 200,
-};
-app.set(
-    "trust proxy",
-    typeof process.env.TRUST_PROXY === "number" ? process.env.PROXY : 0
-);
+}; 
+app.set("trust proxy", Number(process.env.TRUST_PROXY));
 app.use(limiter);
 app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(httpLogger);
+app.use(errorHttpLogger);
 
 app.get("/", (req, res) => {
     res.send("Hello World!");

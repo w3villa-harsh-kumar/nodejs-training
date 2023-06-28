@@ -1,31 +1,53 @@
 const morgan = require("morgan");
-const json = require("morgan-json");
+const { StatusCodes } = require("http-status-codes");
+const logger = require("./index");
 
-const format = json({
-    method: ":method",
-    url: ":url",
-    status: ":status",
-    contentLength: ":res[content-length]",
-    responseTime: ":response-time",
+const morganOptions = {
+    skip: (req, res) => process.env.NODE_ENV === "test",
+    stream: {
+        write: (message) => logger.http(message.trim())
+    },
+};
+
+const successResponseFormat = (tokens, req, res) => {
+    const { method, url, status } = tokens;
+    return [
+        `[${method(req, res)}]`,
+        `[${url(req, res)}]`,
+        `[${status(req, res)}]`,
+        `[${tokens["response-time"](req, res)} ms]`,
+    ].join(" ");
+};
+
+const errorResponseFormat = (tokens, req, res) => {
+    const { method, url, status } = tokens;
+    return [
+        `[${method(req, res)}]`,
+        `[${url(req, res)}]`,
+        `[${status(req, res)}]`,
+        `[${tokens["response-time"](req, res)} ms] `,
+    ].join(" ");
+};
+
+const successResponsePredicate = (req, res) =>
+    res.statusCode < StatusCodes.BAD_REQUEST;
+const errorResponsePredicate = (req, res) =>
+    res.statusCode >= StatusCodes.BAD_REQUEST;
+
+const httpLogger = morgan(successResponseFormat, {
+    ...morganOptions,
+    skip: (req, res) => !successResponsePredicate(req, res),
 });
 
-const logger = require("./index");
-const httpLogger = morgan(format, {
+const errorHttpLogger = morgan(errorResponseFormat, {
+    ...morganOptions,
+    skip: (req, res) => !errorResponsePredicate(req, res),
     stream: {
-        write: (message) => {
-            const { method, url, status, contentLength, responseTime } =
-                JSON.parse(message);
-
-            logger.info("HTTP Access Log", {
-                timestamp: new Date().toString(),
-                method,
-                url,
-                status: Number(status),
-                contentLength,
-                responseTime: Number(responseTime),
-            });
-        },
+        write: (message) => logger.error(message.trim()),
     },
 });
 
-module.exports = httpLogger;
+module.exports = {
+    httpLogger,
+    errorHttpLogger,
+};
