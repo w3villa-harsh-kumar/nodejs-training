@@ -1,6 +1,8 @@
 const { StatusCodes } = require("http-status-codes");
 const Task = require("../../models").Task;
 const { BadRequestError, NotFoundError } = require("../../errors");
+const NodeCache = require("node-cache");
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 module.exports = {
     createTask: async (req, res, next) => {
@@ -17,6 +19,9 @@ module.exports = {
             if (!task) {
                 throw new BadRequestError("Task not created");
             }
+
+            // set cache
+            myCache.set(`task-${task.id}`, JSON.stringify(task));
 
             // commit transaction
             await transaction.commit();
@@ -72,18 +77,27 @@ module.exports = {
         const transaction = await Task.sequelize.transaction();
         try {
             // get task by id of a user
-            const task = await Task.findOne({
-                where: {
-                    id: req.params.id,
-                    userId: req.user.id,
-                },
-                include: [
-                    {
-                        association: "user",
-                        attributes: ["id", "name", "email"],
+            let task = JSON.parse(
+                myCache.get(`task-${req.params.id}`) === undefined
+                    ? null
+                    : myCache.get(`task-${req.params.id}`)
+            );
+            if (!task) {
+                console.log("Fetching from database");
+                task = await Task.findOne({
+                    where: {
+                        id: req.params.id,
+                        userId: req.user.id,
                     },
-                ],
-            });
+                    include: [
+                        {
+                            association: "user",
+                            attributes: ["id", "name", "email"],
+                        },
+                    ],
+                });
+                myCache.set(`task-${task.id}`, JSON.stringify(task));
+            }
 
             // if task not found
             if (!task) {
