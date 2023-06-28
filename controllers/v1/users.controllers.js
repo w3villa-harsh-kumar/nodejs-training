@@ -52,7 +52,7 @@ module.exports = {
 
             // check if user exists and password is correct
             if (!user || !(await user.matchPassword(password))) {
-                throw new BadRequestError("Invalid email or password");
+                throw new BadRequestError("Invalid credentials");
             }
 
             // generate auth token

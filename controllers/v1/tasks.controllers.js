@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const Task = require("../../models").Task;
-const { BadRequestError } = require("../../errors");
+const { BadRequestError, NotFoundError } = require("../../errors");
 
 module.exports = {
     createTask: async (req, res, next) => {
@@ -87,7 +87,7 @@ module.exports = {
 
             // if task not found
             if (!task) {
-                throw new BadRequestError("Task not found");
+                throw new NotFoundError("Task not found");
             }
 
             // commit transaction
@@ -117,7 +117,7 @@ module.exports = {
 
             // if task not found
             if (!task) {
-                throw new BadRequestError("Task not found");
+                throw new NotFoundError("Task not found");
             }
 
             // update task
@@ -153,7 +153,7 @@ module.exports = {
 
             // if task not found
             if (!task) {
-                throw new BadRequestError("Task not found");
+                throw new NotFoundError("Task not found");
             }
 
             // delete task
