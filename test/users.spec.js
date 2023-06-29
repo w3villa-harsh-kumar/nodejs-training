@@ -24,7 +24,6 @@ describe("+++++++++++ Users API Unit Testing ++++++++++++", () => {
                 .post("/api/v1/users/register")
                 .send(user)
                 .end((err, response) => {
-                    // console.log("response=",response);
                     response.should.have.status(201);
                     response.body.should.be.a("object");
                     response.body.should.have

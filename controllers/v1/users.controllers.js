@@ -1,8 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, AnonmyousError } = require("../../errors");
+const { getValueFromCache, setValueInCache } = require("../../helpers");
 const User = require("../../models").User;
-const NodeCache = require("node-cache");
-const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 module.exports = {
     register: async (req, res, next) => {
@@ -15,6 +14,7 @@ module.exports = {
                     email: req.body.email,
                 },
             });
+
             if (user) {
                 throw new BadRequestError("User already exists");
             }
@@ -26,7 +26,11 @@ module.exports = {
             const token = await newUser.generateAuthToken();
 
             // set token in cache
-            myCache.set(`${req.body.email}`, JSON.stringify(newUser));
+            setValueInCache(`${newUser.id}`, {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+            });
 
             // commit transaction
             await transaction.commit();
@@ -83,15 +87,15 @@ module.exports = {
         const transaction = await User.sequelize.transaction();
         try {
             // get user profile
-            let user =
-                myCache.get(`${req.user.email}`) === undefined
-                    ? null
-                    : JSON.parse(myCache.get(`${req.user.email}`));
+            let user = await getValueFromCache(`${req.user.id}`);
             if (!user) {
                 user = await User.findByPk(req.user.id, {
                     attributes: ["id", "name", "email"],
                 });
-                myCache.set(`${req.user.email}`, JSON.stringify(user));
+                if (!user) {
+                    throw new AnonmyousError("User not found");
+                }
+                setValueInCache(`${req.user.id}`, user);
             } else {
                 transaction.commit();
                 return res.status(StatusCodes.OK).json({

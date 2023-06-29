@@ -34,7 +34,6 @@ const limiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     handler(req, res, next) {
-        console.log("req.ip", req.ip);
         logger.error(`Too many requests from ${req.ip} at ${req.originalUrl}`);
         throw new AnonmyousError(
             `Too many requests, please try again in ${Math.round(
@@ -58,7 +57,7 @@ app.use(httpLogger);
 app.use(errorHttpLogger);
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+    res.send("Welcome to Node js Learning");
 });
 
 // Routes
@@ -69,7 +68,7 @@ app.use("/api/v1/tasks", taskRoutes);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-db.sync()
+db.sync({ force: false})
     .then(() => {
         logger.info("Database connected successfully");
         app.listen(PORT, () => {
